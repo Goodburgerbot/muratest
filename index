@@ -1,0 +1,114 @@
+const Discord = require('discord.js');
+const client = new Discord.Client();
+const config = require("./config.json");
+const prefix = config.json
+
+client.on('ready', () => {
+  console.log(`Logged in as ${client.user.tag} watching over !`);
+  client.user.setActivity("!!help to start", {
+    type: "PLAYING",
+    game: "!!help to show commands"
+  });
+});
+
+client.on('message', msg => {
+  if (msg.content === 'ping') {
+    msg.reply('pong');
+  }
+});
+
+client.on("message", async message => {
+  if(message.author.bot) return;
+  if(message.content.indexOf(config.prefix) !== 0) return;
+  const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+  const command = args.shift().toLowerCase();
+  const { Permissions } = require('discord.js');
+
+const permissions = new Permissions([
+	'KICK_MEMBERS',
+  'BAN_MEMBERS',
+  'MANAGE_MESSAGES',
+]);
+
+  if(command === 'ping') {
+    const m = await message.channel.send("Ping?");
+    m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms.`);
+  }
+  if(command === 'say'|| command === 's') {
+    if(!permissions.has('MANAGE_MESSAGES'))
+      return message.reply("Sorry, you don't have permissions to use this!");
+    const sayMessage = args.join(" ");
+    message.delete().catch(O_o=>{}); 
+    message.channel.send(sayMessage);
+  }
+    if(command === 'kick'|| command === 'k') {
+if(!permissions.has('KICK_MEMBERS'))
+      return message.reply("Sorry, you don't have permissions to use this!");
+
+    let member = message.mentions.members.first() || message.guild.members.get(args[0]);
+
+    if(!member)
+      return message.reply("Please mention a valid member of this server");
+    if(!member.kickable) 
+      return message.reply("I cannot kick this user! Do they have a higher role? Do I have kick permissions?");
+
+    let reason = args.slice(1).join(' ');
+    if(!reason) reason = "No reason provided";
+
+    if(member.id == message.author.id) return message.channel.send("You can't kick yourself!")
+
+    await member.kick(reason)
+
+      .catch(error => message.reply(`Sorry ${message.author} I couldn't kick because of : ${error}`));
+    message.reply(`${member.user.tag} has been kicked by ${message.author.tag} because: ${reason}`);
+
+  }
+  
+  if(command === 'ban'|| command === 'b') {
+if(!permissions.has('BAN_MEMBERS'))
+      return message.reply("Sorry, you don't have permissions to use this!");
+    
+    let member = message.mentions.members.first();
+    if(!member)
+      return message.reply("Please mention a valid member of this server");
+    if(!member.bannable) 
+      return message.reply("I cannot ban this user! Do they have a higher role? Do I have ban permissions?");
+
+    let reason = args.slice(1).join(' ');
+    if(!reason) reason = "No reason provided";
+    
+if(member.id == message.author.id) return message.channel.send(`You can't ban yourself!`)
+
+    await member.ban(reason)
+      .catch(error => message.reply(`Sorry ${message.author} I couldn't ban because of : ${error}`));
+    message.reply(`${member.user.tag} has been banned by ${message.author.tag} because: ${reason}`);
+  }
+  
+ if(command === 'purge'|| command === 'p') {
+    if(!permissions.has('MANAGE_MESSAGES'))
+          return message.reply("Sorry, you don't have permissions to use this!");
+    const deleteCount = parseInt(args[0], 10);
+    
+    if(!deleteCount || deleteCount < 1 || deleteCount > 9000)
+      return message.reply("Please provide a number between 1 and 9000 for the number of messages to delete");
+    
+    message.channel.bulkDelete(deleteCount)
+      .then(messages => console.log(`deleted ${messages.size} messages`))
+      .catch(error => message.reply(`Couldn't delete messages because of: ${error} Please Contact: SS Jove#8099 For Information On how to fix this`));
+  }
+    if(command === 'help'){
+       let embed = new Discord.MessageEmbed()
+           .setAuthor(`Help`, `https://media.discordapp.net/attachments/706156735739723827/706909705460777050/output-onlinepngtools.png`)
+           .addFields(
+               {name: "Help", value: "This Command here dummie", inline: true},
+               {name: "purge/p", value: "purge messages", inline: true},
+               {name: "ban/b", value: "ban someone", inline: true},
+               {name: "kick/k", value: "Kick someone", inline: true},
+               {name: "say/s", value: "Make the bot say something", inline: true},
+               {name: "ping", value: "Show bots ping", inline: true}
+           )
+           message.channel.send(embed)
+   }
+
+})
+client.login('NzA2ODY0Mzg0Njg0NTg5MDg2.XrLMUA.ScW--1f3paIRJpKCpgZIIRGixbk');
