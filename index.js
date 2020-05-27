@@ -605,4 +605,3 @@ client.on("message", message => {
     message.channel.send('Present!');
   }
   })
-client.login(`NzA2OTA5NzY5MTc2MTg2OTMw.XrxtVw.fD3XnQ9-0l2kFJg3neqrjU0D_KU`);
