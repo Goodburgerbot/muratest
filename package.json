@@ -1,5 +1,5 @@
 {
-  "name": "testing",
+  "name": "mura-chan",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,5 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^12.2.0",
+    "moment": "^2.26.0",
+    "quick.db": "^7.1.1"
   }
 }
